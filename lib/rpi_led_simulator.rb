@@ -107,7 +107,10 @@ class RPiLedSimulator
   end
 
   def pin()   @pins.first  end
-  def pins()  @pins        end
+  def pins()
+    @pins
+    'done'
+  end
 
   def refresh(n=0)
 
