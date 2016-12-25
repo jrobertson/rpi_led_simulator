@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rpi_led_simulator'
-  s.version = '0.1.2'
+  s.version = '0.1.3'
   s.summary = "Simulates the rpi gem's functionality for controlling LEDs."
   s.authors = ['James Robertson']
   s.files = Dir['lib/rpi_led_simulator.rb']

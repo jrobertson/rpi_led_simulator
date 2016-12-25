@@ -10,6 +10,7 @@ class RPiLedSimulator
 
   class PinX
 
+    attr_reader :id
 
     def initialize(id, color: :red, parent: nil)
       @id = id
@@ -25,7 +26,7 @@ class RPiLedSimulator
 
     def on(durationx=nil, duration: nil)
       
-      @on = true      
+      @on, @blinking = true, false
       duration ||=  durationx
       
       @off_thread.exit if @off_thread
@@ -53,7 +54,19 @@ class RPiLedSimulator
 
       Thread.new do
         while @blinking do
-          (@on  = true; sleep seconds; @on = false; sleep seconds) 
+          
+          @on  = true
+          sleep seconds / 2.0
+          break if !@blinking
+          sleep seconds / 2.0 
+          break if !@blinking
+          
+          @on = false
+          sleep seconds / 2.0
+          break if !@blinking
+          sleep seconds / 2.0 
+          break if !@blinking
+          
           @on = false; @blinking = false if duration and Time.now >= t2
         end
         
@@ -80,6 +93,8 @@ class RPiLedSimulator
     @color, @symbol, @spacer, @colors = color, symbol, spacer, colors
     
     a = case x
+    when Integer
+      [x]    
     when Fixnum
       [x]
     when String
@@ -107,9 +122,16 @@ class RPiLedSimulator
   end
 
   def pin()   @pins.first  end
+    
   def pins()
-    @pins
-    'done'
+    
+    r = @pins
+    
+    def @pins.inspect()
+      self.map(&:id)
+    end
+    
+    r
   end
 
   def refresh(n=0)
