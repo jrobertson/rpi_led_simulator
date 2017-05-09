@@ -2,19 +2,19 @@
 
 # file: rpi_led_simulator.rb
 
+require 'pinx'
 require 'colored'
 
 class RPiLedSimulator
    
   @leds = []
 
-  class PinX
+  class Led < PinX
 
-    attr_reader :id
 
     def initialize(id, color: :red, parent: nil)
-      @id = id
-      @on, @blinking = false, false
+      
+      super(id)
       @color = color
       @parent = parent
 
@@ -23,62 +23,7 @@ class RPiLedSimulator
     def color()
       @on ? @color : :black
     end
-
-    def on(durationx=nil, duration: nil)
-      
-      @on, @blinking = true, false
-      duration ||=  durationx
-      
-      @off_thread.exit if @off_thread
-      @on_thread = Thread.new {(sleep duration; off()) } if duration
-
-    end
-
-    def off(durationx=nil, duration: nil)
-      
-      @on, @blinking = false, false      
-      duration ||=  durationx
-      
-      @on_thread.exit if @on_thread
-      @off_thread = Thread.new { (sleep duration; on()) } if duration
-
-    end
-    
-    
-    alias stop off        
-
-    def blink(seconds=0.5, duration: nil)
-
-      @blinking = true
-      t2 = Time.now + duration if duration
-
-      Thread.new do
-        while @blinking do
-          
-          @on  = true
-          sleep seconds / 2.0
-          break if !@blinking
-          sleep seconds / 2.0 
-          break if !@blinking
-          
-          @on = false
-          sleep seconds / 2.0
-          break if !@blinking
-          sleep seconds / 2.0 
-          break if !@blinking
-          
-          @on = false; @blinking = false if duration and Time.now >= t2
-        end
         
-      end
-    end
-    
-    def on?()  @on  end
-    def off?() !@on end
-    
-    def to_s()
-      @id
-    end
   end
   
   class Void
@@ -105,7 +50,7 @@ class RPiLedSimulator
 
     @pins = a.map.with_index do |pin, i|
       
-      PinX.new pin, color: colors[i] || color, parent: self 
+      Led.new pin, color: colors[i] || color, parent: self 
       
     end
     
