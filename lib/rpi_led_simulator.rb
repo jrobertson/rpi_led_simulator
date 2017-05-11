@@ -26,12 +26,6 @@ class RPiLedSimulator
         
   end
   
-  class Void
-    def on(duration=nil)               end
-    def off()                          end
-    def blink(seconds=0, duration=nil) end
-    alias stop off
-  end  
 
   def initialize(x=[], color: :red, symbol: '▋', spacer: 0, colors: [])
 
@@ -58,7 +52,7 @@ class RPiLedSimulator
 
       if i.respond_to? :to_i and i.to_i >= self.length then
         puts "RPi warning: PinX instance #{i.inspect} not found"
-        Void.new
+        PinX::Void.new
       else
         super(i)
       end 
